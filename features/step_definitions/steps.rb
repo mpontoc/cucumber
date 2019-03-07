@@ -9,3 +9,7 @@ end
 Então("acho as inforações sobre selenium ruby") do
   assert_text('ruby' , 'selenium')
 end
+
+Então("e bindings") do
+  assert_text('bindings')
+end
