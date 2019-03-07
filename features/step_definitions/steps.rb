@@ -1,4 +1,4 @@
-ado("que eu esteja no google") do
+Dado("que eu esteja no google") do
   visit('http://www.google.com')
 end
 
