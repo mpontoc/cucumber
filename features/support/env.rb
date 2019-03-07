@@ -5,7 +5,7 @@ require 'capybara/dsl'
 
 
 World Capybara::DSL
-BROWSER = ENV['BROWSER']
+BROWSER = ENV['remote']
 
 Capybara.default_driver = :selenium_chrome
 
