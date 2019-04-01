@@ -1,27 +1,30 @@
-FROM ruby:2.3
+FROM ruby:2.4.1
 
 MAINTAINER Cleber Braz <mpontoc@hotmail.com>
 
-RUN mkdir /app
-WORKDIR /app
+RUN mkdir /cucumberApp
+WORKDIR /cucumberApp
+COPY . /cucumberApp
+
+RUN gem install cucumber capybara selenium-webdriver rspec
+
+RUN apt-get update && apt-get install -y --fix-missing curl unzip
+# Install Chrome WebDriver
+RUN CHROMEDRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE` && \
+    mkdir -p /opt/chromedriver-$CHROMEDRIVER_VERSION && \
+    curl -sS -o /tmp/chromedriver_linux64.zip http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip && \
+    unzip -qq /tmp/chromedriver_linux64.zip -d /opt/chromedriver-$CHROMEDRIVER_VERSION && \
+    rm /tmp/chromedriver_linux64.zip && \
+    chmod +x /opt/chromedriver-$CHROMEDRIVER_VERSION/chromedriver && \
+    ln -fs /opt/chromedriver-$CHROMEDRIVER_VERSION/chromedriver /usr/local/bin/chromedriver
+
+# Install Google Chrome
+RUN curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
+    echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list && \
+    apt-get -yqq update && \
+    apt-get -yqq install google-chrome-stable && \
+    rm -rf /var/lib/apt/lists/*
+
+#Configuring the tests to run in the container
 
 RUN gem update
-ADD Gemfile /app/Gemfile
-ADD Gemfile.lock /app/Gemfile.lock
-
-RUN bundle install
-RUN apt-get update && apt-get install -y --fix-missing iceweasel xvfb
-
-ENV   GECKODRIVER_VERSION v0.13.0
-RUN   mkdir -p /opt/geckodriver_folder
-RUN   wget -O /tmp/geckodriver_linux64.tar.gz https://github.com/mozilla/geckodriver/releases/download/$GECKODRIVER_VERSION/geckodriver-$GECKODRIVER_VERSION-linux64.tar.gz
-RUN   tar xf /tmp/geckodriver_linux64.tar.gz -C /opt/geckodriver_folder
-RUN   rm /tmp/geckodriver_linux64.tar.gz
-RUN   chmod +x /opt/geckodriver_folder/geckodriver
-RUN   ln -fs /opt/geckodriver_folder/geckodriver /usr/local/bin/geckodriver
-
-ADD features /app/features
-ADD cucumber-command.sh /app/cucumber-command.sh
-RUN chmod a+x /app/cucumber-command.sh
-
-CMD xvfb-run --server-args="-screen 0 1440x900x24" bash cucumber-command.sh
