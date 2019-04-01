@@ -1,8 +1,24 @@
-version: '2.1'
+version: '2'
 
 services:
-  cucumber:
-    image: cucumber
-    build: .
+  react-web:
+    image: react-web
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
       - 3000:3000
+    volumes:
+      - ./:/usr/src/app
+    entrypoint: "tail -f /dev/null"
+
+  react-web-tests:
+    image: react-web-tests
+    depends_on:
+        - react-web
+    build:
+        context: .
+        dockerfile: Dockerfile.cucumber
+    volumes:
+        - "./:/cucumberApp"
+entrypoint: "tail -f /dev/null"
