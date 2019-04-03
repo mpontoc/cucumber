@@ -7,19 +7,32 @@ WORKDIR ${app_path}
 
 COPY Gemfile* ${app_path}
 
-RUN set -x \
-&& apt-get update \
-&& apt-get install -y wget libfontconfig1 \
-&& rm -rf /var/lib/apt/lists/* \
-&& wget -O /tmp/phantomjs-2.1.1-linux-x86_64.tar.bz2 https://github.com/Medium/phantomjs/releases/download/v2.1.1/phantomjs-2.1.1-linux-x86_64.tar.bz2 \
-&& apt-get remove -y wget \
-&& md5sum /tmp/phantomjs-2.1.1-linux-x86_64.tar.bz2 \
-| grep -q "1c947d57fce2f21ce0b43fe2ed7cd361" \
-&& tar -xjf /tmp/phantomjs-2.1.1-linux-x86_64.tar.bz2 -C /tmp \
-&& rm -rf /tmp/phantomjs-2.1.1-linux-x86_64.tar.bz2 \
-&& mv /tmp/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs \
-&& rm -rf /tmp/phantomjs-2.1.1-linux-x86_64 \
-&& gem install bundler \
+RUN apt-get update
+
+# We need wget to set up the PPA and xvfb to have a virtual screen and unzip to install the Chromedriver
+RUN apt-get install -y wget xvfb unzip
+
+# Set up the Chrome PPA
+RUN wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add -
+RUN echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google.list
+
+# Update the package list and install chrome
+RUN apt-get update -y
+RUN apt-get install -y google-chrome-stable
+
+# Set up Chromedriver Environment variables
+ENV CHROMEDRIVER_VERSION 2.19
+ENV CHROMEDRIVER_DIR /chromedriver
+RUN mkdir $CHROMEDRIVER_DIR
+
+# Download and install Chromedriver
+RUN wget -q --continue -P $CHROMEDRIVER_DIR "http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
+RUN unzip $CHROMEDRIVER_DIR/chromedriver* -d $CHROMEDRIVER_DIR
+
+# Put Chromedriver into the PATH
+ENV PATH $CHROMEDRIVER_DIR:$PATH
+
+RUN gem install bundler \
 && bundle install
 
 
