@@ -1,30 +1,28 @@
-FROM ruby:2.4.1
+FROM ruby:2.3
 
 MAINTAINER Cleber Braz <mpontoc@hotmail.com>
 
-RUN mkdir /cucumberApp
-WORKDIR /cucumberApp
-COPY . /cucumberApp
+ENV app_path /opt/cucumber_google/
+WORKDIR ${app_path}
 
-RUN gem install cucumber capybara selenium-webdriver rspec
+COPY Gemfile* ${app_path}
 
-RUN apt-get update && apt-get install -y --fix-missing curl unzip
-# Install Chrome WebDriver
-RUN CHROMEDRIVER_VERSION=`curl -sS chromedriver.storage.googleapis.com/LATEST_RELEASE` && \
-    mkdir -p /opt/chromedriver-$CHROMEDRIVER_VERSION && \
-    curl -sS -o /tmp/chromedriver_linux64.zip http://chromedriver.storage.googleapis.com/$CHROMEDRIVER_VERSION/chromedriver_linux64.zip && \
-    unzip -qq /tmp/chromedriver_linux64.zip -d /opt/chromedriver-$CHROMEDRIVER_VERSION && \
-    rm /tmp/chromedriver_linux64.zip && \
-    chmod +x /opt/chromedriver-$CHROMEDRIVER_VERSION/chromedriver && \
-    ln -fs /opt/chromedriver-$CHROMEDRIVER_VERSION/chromedriver /usr/local/bin/chromedriver
+RUN set -x \
+&& apt-get update \
+&& apt-get install -y wget libfontconfig1 \
+&& rm -rf /var/lib/apt/lists/* \
+&& wget -O /tmp/phantomjs-2.1.1-linux-x86_64.tar.bz2 https://github.com/Medium/phantomjs/releases/download/v2.1.1/phantomjs-2.1.1-linux-x86_64.tar.bz2 \
+&& apt-get remove -y wget \
+&& md5sum /tmp/phantomjs-2.1.1-linux-x86_64.tar.bz2 \
+| grep -q "1c947d57fce2f21ce0b43fe2ed7cd361" \
+&& tar -xjf /tmp/phantomjs-2.1.1-linux-x86_64.tar.bz2 -C /tmp \
+&& rm -rf /tmp/phantomjs-2.1.1-linux-x86_64.tar.bz2 \
+&& mv /tmp/phantomjs-2.1.1-linux-x86_64/bin/phantomjs /usr/local/bin/phantomjs \
+&& rm -rf /tmp/phantomjs-2.1.1-linux-x86_64 \
+&& gem install bundler \
+&& bundle install
 
-# Install Google Chrome
-RUN curl -sS -o - https://dl-ssl.google.com/linux/linux_signing_key.pub | apt-key add - && \
-    echo "deb http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list && \
-    apt-get -yqq update && \
-    apt-get -yqq install google-chrome-stable && \
-    rm -rf /var/lib/apt/lists/*
 
-#Configuring the tests to run in the container
+COPY . ${app_path}
 
-RUN gem update
+ENTRYPOINT ["bundle", "exec", "cucumber"]
