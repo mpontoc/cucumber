@@ -1,29 +1,32 @@
+# To execute this docker-compose yml file use `docker-compose -f <file_name> up`
+# Add the `-d` flag at the end for detached execution
 version: '2'
-
 services:
-  react-web:
-    image: react-web
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - 3000:3000
+  firefox:
+    image: selenium/node-firefox:3.141.59-mercury
     volumes:
-      - ./:/usr/src/app
-    entrypoint: "tail -f /dev/null"
-
-  react-web-tests:
-    image: react-web-tests
+      - /dev/shm:/dev/shm
     depends_on:
-        - react-web
-    build:
-        context: .
-        dockerfile: Dockerfile.cucumber
-    volumes:
-        - "./:/cucumberApp"
-entrypoint: "tail -f /dev/null"
+      - hub
+    environment:
+      HUB_HOST: hub
 
-cucumber-firefox:
+  chrome:
+    image: selenium/node-chrome:3.141.59-mercury
+    volumes:
+      - /dev/shm:/dev/shm
+    depends_on:
+      - hub
+    environment:
+      HUB_HOST: hub
+
+  hub:
+    image: selenium/hub:3.141.59-mercury
+    ports:
+      - "4444:4444"
+
+
+cucumber-chrome:
   build: .
   command: bundle exec cucumber -f pretty -f json -o cucumber.json
   volumes:
