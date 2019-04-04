@@ -30,4 +30,4 @@ cucumber-chrome:
   build: .
   command: bundle exec cucumber -f pretty -f json -o cucumber.json
   volumes:
-- .:/myap
+- .:/app_path
