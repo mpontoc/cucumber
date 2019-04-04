@@ -1,26 +1,19 @@
-# To execute this docker-compose yml file use `docker-compose -f <file_name> up`
-# Add the `-d` flag at the end for detached execution
-version: '2'
+version: '3'
 services:
-  firefox:
-    image: selenium/node-firefox:3.141.59-mercury
-    volumes:
-      - /dev/shm:/dev/shm
-    depends_on:
-      - hub
-    environment:
-      HUB_HOST: hub
-
-  chrome:
-    image: selenium/node-chrome:3.141.59-mercury
-    volumes:
-      - /dev/shm:/dev/shm
-    depends_on:
-      - hub
-    environment:
-      HUB_HOST: hub
-
-  hub:
-    image: selenium/hub:3.141.59-mercury
+  browser:
+    # See inside via VNC with the "debug" version
+    image: selenium/standalone-chrome-debug
+    
+    # Slightly faster headless version
+    #image: selenium/standalone-chrome    
+    
     ports:
-      - "4444:4444"
+      - "5900:5900" #for VNC access
+      - "4444:4444" #for webdriver access
+
+  ruby:
+    build: .
+    volumes:
+      - .:/app
+    depends_on: 
+- browser
