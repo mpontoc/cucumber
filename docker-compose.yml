@@ -22,3 +22,9 @@ services:
     volumes:
         - "./:/cucumberApp"
 entrypoint: "tail -f /dev/null"
+
+cucumber-firefox:
+  build: .
+  command: bundle exec cucumber -f pretty -f json -o cucumber.json
+  volumes:
+- .:/myap
