@@ -24,10 +24,3 @@ services:
     image: selenium/hub:3.141.59-mercury
     ports:
       - "4444:4444"
-
-
-cucumber-chrome:
-  build: .
-  command: bundle exec cucumber -f pretty -f json -o cucumber.json
-  volumes:
-- .:/app_path
