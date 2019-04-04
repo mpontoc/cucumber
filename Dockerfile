@@ -58,5 +58,5 @@ RUN   ln -fs /opt/geckodriver_folder/geckodriver /usr/local/bin/geckodriver
 
 COPY . ${app_path}
 
-ENTRYPOINT ["bundle", "exec", "cucumber"]
+ENTRYPOINT ["bundle", "exec", "cucumber -f pretty -f json -o cucumber.json"]
 
