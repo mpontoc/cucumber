@@ -58,5 +58,9 @@ RUN gem install bundler \
 
 COPY . ${app_path}
 
-ENTRYPOINT ["bundle", "exec", "cucumber -f pretty -f json -o cucumber.json"]
+ENTRYPOINT ["bundle", "exec", "cucumber"]
+
+CMD ["cucumber -f pretty -f json -o cucumber.json"]
+
+#CMD ["cucumber", "--format", "pretty", "--out", "cucumber.json"]
 
