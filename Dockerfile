@@ -62,5 +62,5 @@ ENTRYPOINT ["bundle", "exec", "cucumber"]
 
 CMD ["cucumber -f pretty -f json -o cucumber.json"]
 
-#CMD ["cucumber", "--format", "pretty", "--out", "cucumber.json"]
+CMD ["cucumber", "--format", "pretty", "--out", "cucumber.json"]
 
