@@ -50,10 +50,10 @@ RUN   rm /tmp/geckodriver_linux64.tar.gz
 RUN   chmod +x /opt/geckodriver_folder/geckodriver
 RUN   ln -fs /opt/geckodriver_folder/geckodriver /usr/local/bin/geckodriver
 
-RUN gem install bundler \
-&& bundle install
+#RUN gem install bundler \
+#&& bundle install
 
-RUN apt-get update
+#RUN apt-get update
 
 
 COPY . ${app_path}
