@@ -1,19 +1,24 @@
-version: '3'
-services:
-  browser:
-    # See inside via VNC with the "debug" version
-    image: selenium/standalone-chrome-debug
-    
-    # Slightly faster headless version
-    #image: selenium/standalone-chrome    
-    
-    ports:
-      - "5900:5900" #for VNC access
-      - "4444:4444" #for webdriver access
+version: '2'
 
-  ruby:
-    build: .
+services:
+  react-web:
+    image: react-web
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
     volumes:
-      - .:/app_path
-    depends_on: 
-- browser
+      - ./:/usr/src/app
+    entrypoint: "tail -f /dev/null"
+
+  react-web-tests:
+    image: react-web-tests
+    depends_on:
+        - react-web
+    build:
+        context: .
+        dockerfile: Dockerfile.cucumber
+    volumes:
+        - "./:/cucumberApp"
+entrypoint: "tail -f /dev/null"

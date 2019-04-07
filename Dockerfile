@@ -1,13 +1,14 @@
+
 FROM ruby:2.5
 
 MAINTAINER Cleber Braz <mpontoc@hotmail.com>
 
-ENV app_path /opt/cucumber_google/
+ENV app /opt/cucumber_google/
 ENV DEBIAN_FRONTEND noninteractive
 ENV CHROMIUM_DRIVER_VERSION 2.40
-WORKDIR ${app_path}
+WORKDIR ${app}
 
-COPY Gemfile* ${app_path}
+COPY Gemfile* ${app}
 
 RUN apt-get update
 
@@ -55,14 +56,6 @@ RUN gem install bundler \
 
 #RUN apt-get update
 
+COPY . ${app}
 
-COPY . ${app_path}
-
-ENTRYPOINT ["bundle", "exec", "cucumber"]
-
-CMD ["cucumber -f pretty -f json -o cucumber.json"]
-
-CMD ["cucumber", "--format", "pretty", "--out", "cucumber.json"]
-
-CMD cucumber -f pretty -f json -o cucumber.json
-
+ENTRYPOINT ["bundle", "exec", "cucumber -f pretty -f json -o cucumber.json -o cucumber.xml"]
