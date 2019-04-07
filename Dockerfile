@@ -54,13 +54,6 @@ RUN   ln -fs /opt/geckodriver_folder/geckodriver /usr/local/bin/geckodriver
 RUN gem install bundler \
 && bundle install
 
-#gerar resuldo dotnet vsts
-RUN dotnet restore
-RUN dotnet build -c Release
-RUN dotnet test dotnetcore-tests/dotnetcore-tests.csproj -c Release --logger "trx;LogFileName=testresults.trx"
-RUN dotnet publish -c Release -o out
-ENTRYPOINT dotnet dotnetcore-sample/out/dotnetcore-sample.dll
-
 COPY . ${app}
 
-ENTRYPOINT ["bundle", "exec", "cucumber -f pretty -f json -o cucumber.json -o cucumber.xml", "dotnet", "dotnetcore-sample.dll"]
+ENTRYPOINT ["bundle", "exec", "cucumber -f pretty -f json -o cucumber.json -o cucumber.xml"]
