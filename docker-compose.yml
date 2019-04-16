@@ -10,7 +10,7 @@ services:
       context: .
       dockerfile: Dockerfile  
     volumes: 
-      - /user/temp:/app/prints
+      - /app/prints
     depends_on:
       - hub
     links:
