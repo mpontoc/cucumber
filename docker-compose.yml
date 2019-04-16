@@ -30,6 +30,3 @@ services:
       - hub
     links:
       - hub
-networks: 
-  webnar:
-    driver: bridge
