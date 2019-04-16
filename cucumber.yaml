@@ -4,4 +4,4 @@ html: --format html --out=features.html
 dot: --format progress
 bdd: --format pretty
 json: --format json -o "report.json"
-junit: --format junit -o result
+junit: --format junit -o prints
