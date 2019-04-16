@@ -1,24 +1,35 @@
 version: '2'
-
 services:
-  react-web:
-    image: react-web
+  firefox:
+    image: selenium/node-firefox
+    volumes:
+      - /dev/shm:/dev/shm
+    depends_on:
+      - hub
+    environment:
+      HUB_HOST: hub
+  chrome:
+    image: selenium/node-chrome
+    volumes:
+      - /dev/shm:/dev/shm
+    depends_on:
+      - hub
+    environment:
+      HUB_HOST: hub
+  hub:
+    image: selenium/hub
+    ports:
+      - "4444:4444"
+  cucumber:
     build:
       context: .
-      dockerfile: Dockerfile
-    ports:
-      - 3000:3000
-    volumes:
-      - ./:/usr/src/app
-    entrypoint: "tail -f /dev/null"
-
-  react-web-tests:
-    image: react-web-tests
+      dockerfile: Dockerfile  
+    volumes: 
+      - /user/temp:/app/result
     depends_on:
-        - react-web
-    build:
-        context: .
-        dockerfile: Dockerfile.cucumber
-    volumes:
-        - "./:/cucumberApp"
-entrypoint: "tail -f /dev/null"
+      - hub
+    links:
+      - hub
+networks: 
+  webnar:
+    driver: bridge
