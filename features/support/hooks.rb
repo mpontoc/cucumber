@@ -28,8 +28,7 @@ end
 
 at_exit do
     time = Time.now.getutc
-    ReportBuilder.configure do |config|
-    config.junit_path = 'prints'    
+    ReportBuilder.configure do |config|   
     config.json_path = 'report.json'
     config.report_path = 'cucumber_web_report'
     config.report_types = [:html]
