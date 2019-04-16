@@ -58,4 +58,4 @@ RUN gem install bundler \
 COPY . ${app}
 
 ENTRYPOINT ["bundle", "exec", "cucumber -f pretty -f junit -o result"]
-CMD cucumber -f pretty -f junit -o result
+'CMD cucumber -f pretty -f junit -o result
