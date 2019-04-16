@@ -7,6 +7,7 @@ ENV app /opt/cucumber_google/
 ENV DEBIAN_FRONTEND noninteractive
 ENV CHROMIUM_DRIVER_VERSION 2.40
 WORKDIR ${app}
+VOLUME ./usr/src/app
 
 COPY Gemfile* ${app}
 
