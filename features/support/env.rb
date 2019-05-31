@@ -5,7 +5,7 @@ require 'capybara/dsl'
 require 'site_prism'
 
 World Capybara::DSL
-BROWSER = 'firefox'
+BROWSER = 'remote'
 
 if BROWSER == 'remote'
   Capybara.default_driver = :headless_chrome
